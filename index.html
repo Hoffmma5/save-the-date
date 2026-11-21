@@ -18,8 +18,49 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Beth+Ellen&family=Cormorant+SC:wght@700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="preload" href="assets/orange.webp" as="image">
+  <link rel="preload" href="assets/sky.webp" as="image">
+  <link rel="preload" href="assets/village.webp" as="image">
+  <script>
+    // Start on the intro, unless the visitor asked for less motion.
+    (function () {
+      var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.documentElement.className = calm ? 'stage-done' : 'stage-intro';
+    })();
+  </script>
 </head>
 <body>
+  <!-- One continuous painting: the sky on top, the village below.
+       The intro looks at the sky; at the end the "camera" moves down. -->
+  <div class="scene" aria-hidden="true">
+    <div class="track">
+      <img class="scene-sky scene-sky-top" src="assets/sky.webp" alt="" width="1644" height="740">
+      <img class="scene-sky" src="assets/sky.webp" alt="" width="1644" height="740">
+      <img class="scene-village" src="assets/village.webp" alt="" width="1774" height="887">
+    </div>
+  </div>
+  <div class="veil" aria-hidden="true"></div>
+
+  <!-- Intro: the logo on a blank page and the language buttons. The white
+       page is then wiped away to reveal the sky. -->
+  <div class="intro" id="intro">
+    <div class="brand">
+      <p class="brand-names">Marek &amp; Paulo</p>
+      <p class="brand-tag">To this and every summer</p>
+      <img class="brand-leaf" src="assets/logo-leaf.png" alt="" width="64" height="38">
+      <div class="start" role="group" aria-label="Language · Jazyk · Idioma">
+        <button type="button" class="btn-lang" data-start="en" lang="en">EN</button>
+        <button type="button" class="btn-lang" data-start="cs" lang="cs">CZ</button>
+        <button type="button" class="btn-lang" data-start="pt" lang="pt">PT</button>
+      </div>
+    </div>
+  </div>
+  <div class="orange" id="orange" aria-hidden="true">
+    <img class="orange-logo" src="assets/logo-mark.png" alt="" width="166" height="160">
+    <img class="orange-paint" src="assets/orange.webp" alt="" width="804" height="760">
+  </div>
+  <p class="written" aria-hidden="true"><span data-i18n="introDate">1–3 October</span></p>
+
   <nav class="lang" aria-label="Language">
     <button type="button" data-lang="cs">CZ</button>
     <button type="button" data-lang="en">EN</button>
@@ -29,33 +70,28 @@
 
   <main class="card">
     <p class="names">Marek &amp; Paulo</p>
-    <h1 class="script">save the date</h1>
+    <h1 class="script"><span>save the date</span></h1>
     <p class="lead" data-i18n="lead">We're getting married</p>
 
     <div class="rule" aria-hidden="true"></div>
 
     <p class="date" data-i18n="date">1 – 3 October 2027</p>
-    <p class="time" data-i18n="time">starting Friday at 14:00</p>
     <p class="place" data-i18n="place">Algarve · Portugal</p>
+    <div class="cal">
+      <p class="cal-label">
+        <span class="sc" data-i18n="calLabel">Add to your calendar</span>
+      </p>
+      <div class="cal-links">
+        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Marek%20%26%20Paulo%20%C2%B7%20save%20the%20date&amp;dates=20271001T130000Z%2F20271003T110000Z&amp;location=Algarve%2C%20Portugal&amp;details=Save%20the%20date!%20The%20invitation%20will%20follow%20by%20post.%20https%3A%2F%2Fsave.marekandpaulo.com%2F" target="_blank" rel="noopener">Google</a>
+        <a href="save-the-date.ics" download>Apple</a>
+        <a href="https://outlook.live.com/calendar/0/deeplink/compose?path=%2Fcalendar%2Faction%2Fcompose&amp;rru=addevent&amp;subject=Marek%20%26%20Paulo%20%C2%B7%20save%20the%20date&amp;startdt=2027-10-01T13%3A00%3A00Z&amp;enddt=2027-10-03T11%3A00%3A00Z&amp;location=Algarve%2C%20Portugal&amp;body=Save%20the%20date!%20The%20invitation%20will%20follow%20by%20post.%20https%3A%2F%2Fsave.marekandpaulo.com%2F" target="_blank" rel="noopener">Outlook</a>
+      </div>
+    </div>
 
     <div class="rule" aria-hidden="true"></div>
 
     <p class="note" data-i18n="note">A proper invitation will follow by post. Tell us where to send it.</p>
     <button type="button" class="btn" id="open-form" data-i18n="cta">Send us your address</button>
-
-    <div class="cal">
-      <p class="cal-label">
-        <span class="sc" data-i18n="calLabel">Add to your calendar</span>
-        <span class="cal-hint" data-i18n="calHint">no commitment yet</span>
-      </p>
-      <p class="cal-links">
-        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Marek%20%26%20Paulo%20%C2%B7%20save%20the%20date&amp;dates=20271001T130000Z%2F20271003T110000Z&amp;location=Algarve%2C%20Portugal&amp;details=Save%20the%20date!%20The%20invitation%20will%20follow%20by%20post.%20https%3A%2F%2Fsave.marekandpaulo.com%2F" target="_blank" rel="noopener">Google</a>
-        <span aria-hidden="true">·</span>
-        <a href="save-the-date.ics" download>Apple</a>
-        <span aria-hidden="true">·</span>
-        <a href="https://outlook.live.com/calendar/0/deeplink/compose?path=%2Fcalendar%2Faction%2Fcompose&amp;rru=addevent&amp;subject=Marek%20%26%20Paulo%20%C2%B7%20save%20the%20date&amp;startdt=2027-10-01T13%3A00%3A00Z&amp;enddt=2027-10-03T11%3A00%3A00Z&amp;location=Algarve%2C%20Portugal&amp;body=Save%20the%20date!%20The%20invitation%20will%20follow%20by%20post.%20https%3A%2F%2Fsave.marekandpaulo.com%2F" target="_blank" rel="noopener">Outlook</a>
-      </p>
-    </div>
   </main>
 
   <!-- The form in three steps: group → name → address. Steps 2 and 3 speak

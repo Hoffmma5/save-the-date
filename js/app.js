@@ -50,6 +50,46 @@
   applyLang(pickLang());
 
   // =========================================================
+  // The intro: pick a language (EN / CZ / PT) → paint → fall → done
+  // (timings match the transitions in css/style.css)
+  // =========================================================
+  var PAINT_MS = 3900;   // morph, sky, the dates written, a moment to look
+  var FALL_MS = 3100;    // the orange falls, the view moves into the village
+
+  function setStage(name) { root.className = 'stage-' + name; }
+
+  function imagesReady() {
+    var imgs = Array.prototype.slice.call(document.querySelectorAll('.scene img, .orange img'));
+    var all = Promise.all(imgs.map(function (img) {
+      return img.decode ? img.decode().catch(function () {}) : Promise.resolve();
+    }));
+    // never wait more than 2.5 s for slow connections
+    return Promise.race([all, new Promise(function (r) { setTimeout(r, 2500); })]);
+  }
+
+  var started = false;
+  document.querySelectorAll('[data-start]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (started) return;
+      started = true;
+      try { localStorage.setItem('std-lang', b.dataset.start); } catch (e) {}
+      applyLang(b.dataset.start);
+      imagesReady().then(function () {
+        setStage('paint');
+        setTimeout(function () {
+          setStage('fall');
+          setTimeout(function () {
+            setStage('done');
+            window.scrollTo(0, 0);
+            var h1 = document.querySelector('.card h1');
+            if (h1) { h1.tabIndex = -1; h1.focus({ preventScroll: true }); }
+          }, FALL_MS);
+        }, PAINT_MS);
+      });
+    });
+  });
+
+  // =========================================================
   // The form: group → name → address → thanks
   // =========================================================
   var dialog = document.getElementById('form-dialog');

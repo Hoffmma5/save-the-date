@@ -7,44 +7,40 @@
 window.I18N = {
   page: {
     cs: {
+      introDate: '1.–3. října',
       lead: 'Bereme se!',
       date: '1.–3. října 2027',
-      time: 'začínáme v pátek ve 14:00',
       place: 'Algarve · Portugalsko',
       note: 'Pozvánka dorazí poštou. Napište nám, kam ji máme poslat.',
       cta: 'Poslat adresu',
       calLabel: 'Přidat do kalendáře',
-      calHint: 'zatím úplně nezávazně'
     },
     en: {
+      introDate: '1–3 October',
       lead: "We're getting married!",
       date: '1 – 3 October 2027',
-      time: 'starting Friday at 14:00',
       place: 'Algarve · Portugal',
       note: 'A proper invitation will follow by post. Tell us where to send it.',
       cta: 'Send us your address',
       calLabel: 'Add to your calendar',
-      calHint: 'no commitment yet'
     },
     pt: {
+      introDate: '1 a 3 de outubro',
       lead: 'Vamos casar!',
       date: '1 a 3 de outubro de 2027',
-      time: 'a partir de sexta-feira, às 14:00',
       place: 'Algarve · Portugal',
       note: 'O convite seguirá pelo correio. Digam-nos para onde o enviar.',
       cta: 'Enviar morada',
       calLabel: 'Adicionar ao calendário',
-      calHint: 'por enquanto, sem compromisso'
     },
     de: {
+      introDate: '1.–3. Oktober',
       lead: 'Wir heiraten!',
       date: '1.–3. Oktober 2027',
-      time: 'ab Freitag, 14:00 Uhr',
       place: 'Algarve · Portugal',
       note: 'Die Einladung kommt per Post. Sagt uns, wohin wir sie schicken sollen.',
       cta: 'Adresse senden',
       calLabel: 'Im Kalender eintragen',
-      calHint: 'ganz unverbindlich'
     }
   },
 
