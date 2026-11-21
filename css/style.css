@@ -427,7 +427,7 @@ input:user-invalid { border-color: var(--danger); }
   --sky-w: max(100vw, 222svh);
   --sky-h: calc(var(--sky-w) * 740 / 1644);
   /* two skies, ending a little below the village horizon */
-  --track-h: calc(var(--sky-h) * 2.4 + var(--village-h) * .55);
+  --track-h: calc(var(--sky-h) * 3.8 + var(--village-h) * .55);
   --cam-sky: calc(var(--track-h) - 100svh);   /* camera on the sky */
 
   /* the orange box; the logo and the watercolour fruit are aligned inside it */
@@ -481,7 +481,7 @@ input:user-invalid { border-color: var(--danger); }
   height: auto;
 }
 .scene-sky {
-  top: calc(var(--sky-h) * 1.4);   /* the copies above overlap by 30 % */
+  top: calc(var(--sky-h) * 2.8);   /* five copies, each overlapping the next by 30 % */
   width: var(--sky-w);
   transform: translateX(-50%);
   /* fades out into the village below */
@@ -502,24 +502,22 @@ input:user-invalid { border-color: var(--danger); }
     linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
           mask-composite: intersect;
 }
-.scene-sky-mid {
-  top: calc(var(--sky-h) * .7);
-  z-index: 1;
-  /* upside down, so it differs from both neighbours; the mask flips with
-     it, so it still fades out at the bottom */
-  transform: translateX(-50%) scaleY(-1);
-  -webkit-mask-image: linear-gradient(transparent, #000 30%);
-          mask-image: linear-gradient(transparent, #000 30%);
-}
-.scene-sky-top {
-  top: 0;
-  z-index: 2;
-  /* flipped sideways, so it does not repeat the clouds below, and it melts
-     into the lower sky over the overlap: no visible seam */
-  transform: translateX(-50%) scaleX(-1);
+.scene-sky-1, .scene-sky-3 {
+  /* fade out at the bottom into the copy below: no visible seam */
   -webkit-mask-image: linear-gradient(#000 70%, transparent);
           mask-image: linear-gradient(#000 70%, transparent);
 }
+.scene-sky-2, .scene-sky-4 {
+  /* upside down; the mask flips with them, so it still fades at the bottom */
+  -webkit-mask-image: linear-gradient(transparent, #000 30%);
+          mask-image: linear-gradient(transparent, #000 30%);
+}
+/* every copy is flipped differently from its neighbours, so the clouds
+   never visibly repeat */
+.scene-sky-1 { top: 0;                          z-index: 5; transform: translateX(-50%) scaleX(-1); }
+.scene-sky-2 { top: calc(var(--sky-h) * .7);    z-index: 4; transform: translateX(-50%) scaleY(-1); }
+.scene-sky-3 { top: calc(var(--sky-h) * 1.4);   z-index: 3; }
+.scene-sky-4 { top: calc(var(--sky-h) * 2.1);   z-index: 2; transform: translateX(-50%) scale(-1, -1); }
 @media (orientation: portrait) {
   .scene-village { --shift: 12%; }   /* keep the church in view on phones */
   :root { --shift-n: .12; --land-s: .134; }
@@ -746,23 +744,24 @@ input:user-invalid { border-color: var(--danger); }
   --h1-s: .82;
   --h2-y: 17svh;
   --h2-s: .64;
-  /* where the camera stops on the sky (1 = top, 0 = the village) */
-  --cam-1: .68;
-  --cam-2: .36;
+  /* each of the first two drops moves the camera a full screen of sky,
+     the last one the rest of the way into the village */
+  --cam-1: calc(var(--cam-sky) - 100svh);
+  --cam-2: calc(var(--cam-sky) - 200svh);
 }
 .stage-fall .track {
   animation: camera var(--fall-t) both;
 }
 @keyframes camera {
   0%           { transform: translateY(var(--cam-sky)); animation-timing-function: var(--drop); }
-  19.2%, 39.2% { transform: translateY(calc(var(--cam-sky) * var(--cam-1))); animation-timing-function: var(--drop); }
-  58.5%, 78.5% { transform: translateY(calc(var(--cam-sky) * var(--cam-2))); animation-timing-function: cubic-bezier(.45, 0, .3, 1); }
+  19.2%, 39.2% { transform: translateY(var(--cam-1)); animation-timing-function: var(--drop); }
+  58.5%, 78.5% { transform: translateY(var(--cam-2)); animation-timing-function: cubic-bezier(.45, 0, .3, 1); }
   100%         { transform: translateY(0); }
 }
 /* the dates drift up with the sky and fade */
 .stage-fall .written {
   opacity: 0;
-  transform: translateY(calc(var(--cam-sky) * (var(--cam-1) - 1)));
+  transform: translateY(-100svh);
   transition: transform 2.5s var(--drop), opacity 1.4s ease .3s;
 }
 /* the orange falls through the sky, shrinks, and comes to rest hanging on
@@ -843,14 +842,14 @@ input:user-invalid { border-color: var(--danger); }
   0%, 39.2% { opacity: 1; transform: translateY(-50%); animation-timing-function: var(--drop); }
   58.5%, 100% {
     opacity: 0;
-    transform: translateY(calc(-50% + var(--cam-sky) * (var(--cam-2) - var(--cam-1))));
+    transform: translateY(calc(-50% - 100svh));
   }
 }
 @keyframes say-2 {
   0%, 78.5% { opacity: 1; transform: translateY(-50%); animation-timing-function: cubic-bezier(.45, 0, .3, 1); }
   92%, 100% {
     opacity: 0;
-    transform: translateY(calc(-50% - var(--cam-sky) * var(--cam-2) * .6));
+    transform: translateY(calc(-50% - var(--cam-2) * .6));
   }
 }
 
