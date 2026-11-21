@@ -8,8 +8,8 @@
  */
 
 var HEADERS = [
-  'Odesláno', 'Jméno', 'Skupina', 'Ulice', 'PSČ', 'Město', 'Země',
-  'Poznámka', 'Jazyk'
+  'Sent', 'Name', 'Group', 'Street', 'Postcode', 'City', 'Country',
+  'Note', 'Language'
 ];
 
 function doPost(e) {
