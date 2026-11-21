@@ -68,12 +68,41 @@
   }
 
   var started = false;
+  // ---------- music: starts with the first click, fades in ----------
+  var music = document.getElementById('music');
+  var soundBtn = document.getElementById('sound');
+  var MUSIC_VOLUME = 0.6;
+
+  function startMusic() {
+    if (!music) return;
+    music.volume = 0;
+    soundBtn.setAttribute('aria-pressed', 'true');
+    var p = music.play();
+    if (p && p.catch) p.catch(function () { soundBtn.setAttribute('aria-pressed', 'false'); });
+    var t0 = Date.now();
+    var fade = setInterval(function () {
+      var k = Math.max(0, Math.min(1, (Date.now() - t0) / 3000));
+      music.volume = MUSIC_VOLUME * k;
+      if (k >= 1) clearInterval(fade);
+    }, 50);
+  }
+
+  if (soundBtn) {
+    soundBtn.addEventListener('click', function () {
+      var on = soundBtn.getAttribute('aria-pressed') !== 'true';
+      soundBtn.setAttribute('aria-pressed', String(on));
+      if (on) { music.volume = MUSIC_VOLUME; music.play().catch(function () {}); }
+      else music.pause();
+    });
+  }
+
   document.querySelectorAll('[data-start]').forEach(function (b) {
     b.addEventListener('click', function () {
       if (started) return;
       started = true;
       try { localStorage.setItem('std-lang', b.dataset.start); } catch (e) {}
       applyLang(b.dataset.start);
+      startMusic();
       imagesReady().then(function () {
         setStage('paint');
         setTimeout(function () {

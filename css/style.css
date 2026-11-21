@@ -61,6 +61,29 @@ body {
 .lang button:hover { color: var(--text); }
 .lang button[aria-pressed="true"] { color: var(--ink); }
 
+/* ---------- music on / off ---------- */
+.sound {
+  position: fixed;
+  z-index: 7;
+  top: 12px;
+  left: 12px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--ink);
+  background: rgba(255, 255, 255, .7);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: opacity .6s ease;
+}
+.sound svg { width: 22px; height: 22px; }
+.sound .off, .sound[aria-pressed="false"] .on { display: none; }
+.sound[aria-pressed="false"] .off { display: block; }
+.stage-intro .sound { opacity: 0; visibility: hidden; }
+
 /* ---------- the content: no frame, just type on the veiled sky ---------- */
 .card {
   position: relative;
@@ -515,9 +538,9 @@ input:user-invalid { border-color: var(--danger); }
   position: absolute;
   left: 0;
   right: 0;
-  top: calc(50% - 180px);
+  top: calc(50% - 150px);
   padding: 0 16px;
-  padding-top: calc(var(--o-small) + 26px);  /* room for the orange above */
+  padding-top: calc(var(--o-small) + 18px);  /* room for the orange above */
   text-align: center;
   color: var(--ink);
 }
@@ -525,24 +548,24 @@ input:user-invalid { border-color: var(--danger); }
   margin: 0;
   font-family: var(--sc);
   font-weight: 700;
-  font-size: clamp(28px, 8.4vw, 44px);
+  font-size: clamp(20px, 5.9vw, 31px);
   line-height: 1.1;
   letter-spacing: .12em;
   text-transform: uppercase;
 }
 .brand-tag {
-  margin: 6px 0 0;
+  margin: 4px 0 0;
   font-family: var(--sc);
   font-weight: 700;
-  font-size: clamp(13px, 3.6vw, 19px);
+  font-size: clamp(9.5px, 2.5vw, 13px);
   letter-spacing: .18em;
   text-transform: uppercase;
 }
 .brand-leaf {
   display: block;
-  width: 34px;
+  width: 24px;
   height: auto;
-  margin: 12px auto 0;
+  margin: 8px auto 0;
 }
 .start {
   display: flex;
@@ -573,7 +596,7 @@ input:user-invalid { border-color: var(--danger); }
   position: fixed;
   z-index: 5;
   left: 50%;
-  top: calc(50% - 180px);
+  top: calc(50% - 150px);
   width: var(--o-small);
   aspect-ratio: 804 / 760;
   transform: translateX(-50%);
