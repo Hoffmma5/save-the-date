@@ -21,7 +21,7 @@ Jazyk se vybere automaticky podle prohlížeče. Natvrdo ho jde nastavit v odkaz
 
 Formulář má tři kroky:
 1. **Skupina:** Česká rodina / Família portuguesa / Friends who are basically family.
-2. **Jméno:** seznam z `guests.csv` vyfiltrovaný podle skupiny. Od tohoto kroku je formulář v jazyce skupiny (cz → čeština, pt → portugalština, friends → angličtina). Když je ve skupině víc než 8 položek, objeví se vyhledávání. Kdo se nenajde, klikne na „Nejsem na seznamu“ a jméno napíše sám.
+2. **Jméno:** seznam z `guests.csv` vyfiltrovaný podle skupiny. Od tohoto kroku je formulář v jazyce skupiny (cz → čeština, pt → portugalština, friends → angličtina). Když je ve skupině víc než 8 položek, objeví se vyhledávání.
 3. **Adresa:** ulice, PSČ, město, země (povinné; země se předvyplní podle skupiny) a nepovinná poznámka.
 
 `guests.csv` jde upravovat v Excelu. Ulož ho jako **CSV UTF-8**, jinak se rozbijí háčky. Oddělovač může být čárka i středník. První sloupec `name` je text, který se ukáže v seznamu (třeba „Jana Nováková + Petr Novák“), druhý sloupec `group` má hodnoty `cz`, `pt` nebo `friends`.

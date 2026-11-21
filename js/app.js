@@ -58,8 +58,6 @@
   var filter = document.getElementById('guest-filter');
   var guestStatus = document.getElementById('guest-status');
   var guestName = document.getElementById('guest-name');
-  var nameField = document.getElementById('name-field');
-  var nameInput = document.getElementById('f-name');
   var countryInput = document.getElementById('f-country');
   var status = document.getElementById('status');
   var submit = document.getElementById('submit');
@@ -194,7 +192,6 @@
 
   function chooseGuest(name) {
     state.guest = name;
-    guestName.hidden = false;
     guestName.innerHTML = '';
     var strong = document.createElement('strong');
     strong.textContent = name;
@@ -205,18 +202,8 @@
     change.addEventListener('click', function () { showStep('name'); });
     guestName.appendChild(strong);
     guestName.appendChild(change);
-    nameField.hidden = true;
-    nameInput.required = false;
     goToAddress();
   }
-
-  document.getElementById('not-listed').addEventListener('click', function () {
-    state.guest = null;
-    guestName.hidden = true;
-    nameField.hidden = false;
-    nameInput.required = true;
-    goToAddress();
-  });
 
   // ---------- step 3: address ----------
   function goToAddress() {
@@ -247,8 +234,7 @@
     function val(k) { return String(data.get(k) || '').trim(); }
 
     var payload = new URLSearchParams({
-      name: state.guest || val('name'),
-      onList: state.guest ? 'yes' : 'no',
+      name: state.guest,
       group: state.group,
       street: val('street'),
       zip: val('zip'),
