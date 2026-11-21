@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Marek &amp; Paulo · Save the date</title>
+  <meta name="description" content="Save the date · 1–3 October 2027 · Algarve, Portugal">
+  <meta name="robots" content="noindex">
+  <meta property="og:title" content="Marek &amp; Paulo · Save the date">
+  <meta property="og:description" content="1–3 October 2027 · Algarve, Portugal">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://save.marekandpaulo.com/">
+  <meta name="theme-color" content="#fcfafa">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Beth+Ellen&family=Cormorant+SC:wght@700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="lang" aria-label="Language">
+    <button type="button" data-lang="cs">CZ</button>
+    <button type="button" data-lang="en">EN</button>
+    <button type="button" data-lang="pt">PT</button>
+    <button type="button" data-lang="de">DE</button>
+  </nav>
+
+  <main class="card">
+    <p class="names">Marek &amp; Paulo</p>
+    <h1 class="script">save the date</h1>
+    <p class="lead" data-i18n="lead">We're getting married</p>
+
+    <div class="rule" aria-hidden="true"></div>
+
+    <p class="date" data-i18n="date">1 – 3 October 2027</p>
+    <p class="time" data-i18n="time">starting Friday at 14:00</p>
+    <p class="place" data-i18n="place">Algarve · Portugal</p>
+
+    <div class="rule" aria-hidden="true"></div>
+
+    <p class="note" data-i18n="note">A proper invitation will follow by post. Tell us where to send it.</p>
+    <button type="button" class="btn" id="open-form" data-i18n="cta">Send us your address</button>
+  </main>
+
+  <dialog id="form-dialog" aria-labelledby="form-title">
+    <form id="rsvp" novalidate>
+      <button type="button" class="close" id="close-form" data-i18n-aria="close" aria-label="Close">&times;</button>
+      <h2 class="script" id="form-title" data-i18n="formTitle">your address</h2>
+
+      <div class="field">
+        <label for="f-name" data-i18n="name">Full name</label>
+        <input id="f-name" name="name" type="text" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="f-email" data-i18n="email">Email</label>
+        <input id="f-email" name="email" type="email" autocomplete="email" required>
+      </div>
+
+      <fieldset>
+        <legend class="sc" data-i18n="addressLegend">Postal address for the invitation</legend>
+        <div class="field">
+          <label for="f-street" data-i18n="street">Street and number</label>
+          <input id="f-street" name="street" type="text" autocomplete="address-line1" required>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="f-zip" data-i18n="zip">Postcode</label>
+            <input id="f-zip" name="zip" type="text" autocomplete="postal-code" required>
+          </div>
+          <div class="field grow">
+            <label for="f-city" data-i18n="city">City</label>
+            <input id="f-city" name="city" type="text" autocomplete="address-level2" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-country" data-i18n="country">Country</label>
+          <input id="f-country" name="country" type="text" autocomplete="country-name" required>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend class="sc" data-i18n="companionsLegend">Who would come with you?</legend>
+        <p class="hint" data-i18n="companionsHint">Nothing binding yet, just so we have an idea.</p>
+        <ul id="companions"></ul>
+        <button type="button" class="link" id="add-companion" data-i18n="addPerson">+ Add a person</button>
+      </fieldset>
+
+      <!-- Spam trap: people never see or fill this field -->
+      <div class="trap" aria-hidden="true">
+        <label for="f-website">Website</label>
+        <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+      <p class="hint small" data-i18n="privacy">We'll only use your address to send the invitation.</p>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+      <button type="submit" class="btn" id="submit" data-i18n="submit">Send</button>
+    </form>
+
+    <div class="thanks" id="thanks" hidden>
+      <h2 class="script" data-i18n="thanksTitle">thank you</h2>
+      <p data-i18n="thanksText">You'll hear from us by post.</p>
+      <button type="button" class="btn" id="close-thanks" data-i18n="close">Close</button>
+    </div>
+  </dialog>
+
+  <template id="companion-row">
+    <li>
+      <input type="text" name="companion" autocomplete="off">
+      <button type="button" class="remove">&times;</button>
+    </li>
+  </template>
+
+  <script src="js/config.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
