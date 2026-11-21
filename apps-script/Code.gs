@@ -8,8 +8,8 @@
  */
 
 var HEADERS = [
-  'Odesláno', 'Jméno', 'E-mail', 'Ulice', 'PSČ', 'Město', 'Země',
-  'Doprovod', 'Počet doprovodu', 'Jazyk'
+  'Odesláno', 'Jméno', 'Ze seznamu', 'Skupina', 'Ulice', 'PSČ', 'Město',
+  'Země', 'Poznámka', 'Jazyk'
 ];
 
 function doPost(e) {
@@ -26,13 +26,13 @@ function doPost(e) {
     sheet.appendRow([
       new Date(),
       clean(p.name),
-      clean(p.email),
+      clean(p.onList),
+      clean(p.group),
       clean(p.street),
       clean(p.zip),
       clean(p.city),
       clean(p.country),
-      clean(p.companions),
-      Number(p.companionCount) || 0,
+      clean(p.note),
       clean(p.lang)
     ]);
 

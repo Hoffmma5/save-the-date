@@ -58,48 +58,79 @@
     </div>
   </main>
 
-  <dialog id="form-dialog" aria-labelledby="form-title">
-    <form id="rsvp" novalidate>
-      <button type="button" class="close" id="close-form" data-i18n-aria="close" aria-label="Close">&times;</button>
-      <h2 class="script" id="form-title" data-i18n="formTitle">your address</h2>
+  <!-- The form in three steps: group → name → address. Steps 2 and 3 speak
+       the language of the chosen group (cz → cs, pt → pt, friends → en). -->
+  <dialog id="form-dialog" aria-label="Save the date">
+    <button type="button" class="close" id="close-form" aria-label="Close">&times;</button>
+
+    <!-- Step 1: which part of the family -->
+    <section class="step" data-step="group">
+      <div class="question">
+        <p class="q-main" lang="en">Which part of our big family are you?</p>
+        <p lang="cs"><svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="10" fill="#fff"/><rect y="10" width="30" height="10" fill="#d7141a"/><path d="M0 0l15 10L0 20z" fill="#11457e"/></svg>Do které části naší velké rodiny patříš?</p>
+        <p lang="pt"><svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="12" height="20" fill="#046a38"/><rect x="12" width="18" height="20" fill="#da291c"/><circle cx="12" cy="10" r="4.2" fill="#ffe900"/></svg>A que parte da nossa grande família pertences?</p>
+      </div>
+      <div class="choices">
+        <button type="button" class="choice" data-group="cz" lang="cs">
+          <svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="10" fill="#fff"/><rect y="10" width="30" height="10" fill="#d7141a"/><path d="M0 0l15 10L0 20z" fill="#11457e"/></svg>
+          Česká rodina
+        </button>
+        <button type="button" class="choice" data-group="pt" lang="pt">
+          <svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="12" height="20" fill="#046a38"/><rect x="12" width="18" height="20" fill="#da291c"/><circle cx="12" cy="10" r="4.2" fill="#ffe900"/></svg>
+          Família portuguesa
+        </button>
+        <button type="button" class="choice" data-group="friends" lang="en">
+          <svg class="flag heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.5 2.9 4.5 6.6 4.5c2.2 0 3.6 1.2 5.4 3.2 1.8-2 3.2-3.2 5.4-3.2 3.7 0 5.7 4 4.2 7.3C19.5 16.4 12 21 12 21z"/></svg>
+          Friends who are basically family
+        </button>
+      </div>
+    </section>
+
+    <!-- Step 2: find your name -->
+    <section class="step" data-step="name" hidden>
+      <h2 class="script" data-f="nameTitle">find your name</h2>
+      <p class="hint" data-f="nameHint">on our guest list</p>
+      <input type="search" id="guest-filter" class="filter" data-f-ph="filter" data-f-aria="filter" autocomplete="off" hidden>
+      <ul class="guests" id="guest-list"></ul>
+      <p class="status" id="guest-status" role="status"></p>
+      <div class="step-nav">
+        <button type="button" class="link back" data-back="group" data-f="back">← Back</button>
+        <button type="button" class="link" id="not-listed" data-f="notListed">I'm not on the list</button>
+      </div>
+    </section>
+
+    <!-- Step 3: the address -->
+    <form class="step" id="rsvp" data-step="address" hidden novalidate>
+      <h2 class="script" data-f="addressTitle">where should we send it?</h2>
+      <p class="guest-name" id="guest-name"></p>
+
+      <div class="field" id="name-field" hidden>
+        <label for="f-name" data-f="name">Full name</label>
+        <input id="f-name" name="name" type="text" autocomplete="name">
+      </div>
 
       <div class="field">
-        <label for="f-name" data-i18n="name">Full name</label>
-        <input id="f-name" name="name" type="text" autocomplete="name" required>
+        <label for="f-street" data-f="street">Street and number</label>
+        <input id="f-street" name="street" type="text" autocomplete="address-line1" required>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="f-zip" data-f="zip">Postcode</label>
+          <input id="f-zip" name="zip" type="text" autocomplete="postal-code" required>
+        </div>
+        <div class="field grow">
+          <label for="f-city" data-f="city">City</label>
+          <input id="f-city" name="city" type="text" autocomplete="address-level2" required>
+        </div>
       </div>
       <div class="field">
-        <label for="f-email" data-i18n="email">Email</label>
-        <input id="f-email" name="email" type="email" autocomplete="email" required>
+        <label for="f-country" data-f="country">Country</label>
+        <input id="f-country" name="country" type="text" autocomplete="country-name" required>
       </div>
-
-      <fieldset>
-        <legend class="sc" data-i18n="addressLegend">Postal address for the invitation</legend>
-        <div class="field">
-          <label for="f-street" data-i18n="street">Street and number</label>
-          <input id="f-street" name="street" type="text" autocomplete="address-line1" required>
-        </div>
-        <div class="row">
-          <div class="field">
-            <label for="f-zip" data-i18n="zip">Postcode</label>
-            <input id="f-zip" name="zip" type="text" autocomplete="postal-code" required>
-          </div>
-          <div class="field grow">
-            <label for="f-city" data-i18n="city">City</label>
-            <input id="f-city" name="city" type="text" autocomplete="address-level2" required>
-          </div>
-        </div>
-        <div class="field">
-          <label for="f-country" data-i18n="country">Country</label>
-          <input id="f-country" name="country" type="text" autocomplete="country-name" required>
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend class="sc" data-i18n="companionsLegend">Who would come with you?</legend>
-        <p class="hint" data-i18n="companionsHint">Nothing binding yet, just so we have an idea.</p>
-        <ul id="companions"></ul>
-        <button type="button" class="link" id="add-companion" data-i18n="addPerson">+ Add a person</button>
-      </fieldset>
+      <div class="field">
+        <label for="f-note"><span data-f="note">Note</span> <span class="optional" data-f="optional">(optional)</span></label>
+        <textarea id="f-note" name="note" rows="3" maxlength="500" data-f-ph="notePh"></textarea>
+      </div>
 
       <!-- Spam trap: people never see or fill this field -->
       <div class="trap" aria-hidden="true">
@@ -107,24 +138,21 @@
         <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
       </div>
 
-      <p class="hint small" data-i18n="privacy">We'll only use your address to send the invitation.</p>
+      <p class="hint small" data-f="privacy">We'll only use your address to send the invitation.</p>
       <p class="status" id="status" role="status" aria-live="polite"></p>
-      <button type="submit" class="btn" id="submit" data-i18n="submit">Send</button>
+      <button type="submit" class="btn" id="submit" data-f="submit">Send</button>
+      <div class="step-nav">
+        <button type="button" class="link back" data-back="name" data-f="back">← Back</button>
+      </div>
     </form>
 
-    <div class="thanks" id="thanks" hidden>
-      <h2 class="script" data-i18n="thanksTitle">thank you</h2>
-      <p data-i18n="thanksText">You'll hear from us by post.</p>
-      <button type="button" class="btn" id="close-thanks" data-i18n="close">Close</button>
-    </div>
+    <!-- Done -->
+    <section class="step thanks" data-step="thanks" hidden>
+      <h2 class="script" data-f="thanksTitle">thank you</h2>
+      <p id="thanks-text" data-f="thanksText">You'll hear from us by post.</p>
+      <button type="button" class="btn" id="close-thanks" data-f="close">Close</button>
+    </section>
   </dialog>
-
-  <template id="companion-row">
-    <li>
-      <input type="text" name="companion" autocomplete="off">
-      <button type="button" class="remove">&times;</button>
-    </li>
-  </template>
 
   <script src="js/config.js"></script>
   <script src="js/i18n.js"></script>

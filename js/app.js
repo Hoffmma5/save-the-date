@@ -1,15 +1,18 @@
 (function () {
   'use strict';
 
-  var I18N = window.I18N;
+  var PAGE = window.I18N.page;
+  var FORM = window.I18N.form;
   var CONFIG = window.SAVE_THE_DATE_CONFIG || {};
   var LANGS = ['cs', 'en', 'pt', 'de'];
+  var GROUP_LANG = { cz: 'cs', pt: 'pt', friends: 'en' };
   var root = document.documentElement;
+
+  // =========================================================
+  // The page language (four languages, switch at the top)
+  // =========================================================
   var lang = 'en';
 
-  function t(key) { return (I18N[lang] && I18N[lang][key]) || I18N.en[key] || ''; }
-
-  // ---------- language ----------
   function pickLang() {
     var fromUrl = new URLSearchParams(location.search).get('lang');
     if (LANGS.indexOf(fromUrl) >= 0) return fromUrl;
@@ -30,16 +33,7 @@
     lang = next;
     root.lang = lang;
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
-      el.textContent = t(el.dataset.i18n);
-    });
-    document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
-      el.setAttribute('aria-label', t(el.dataset.i18nAria));
-    });
-    document.querySelectorAll('#companions input').forEach(function (el) {
-      el.placeholder = t('companionPlaceholder');
-    });
-    document.querySelectorAll('#companions .remove').forEach(function (el) {
-      el.setAttribute('aria-label', t('remove'));
+      el.textContent = PAGE[lang][el.dataset.i18n] || PAGE.en[el.dataset.i18n];
     });
     document.querySelectorAll('.lang button').forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.dataset.lang === lang));
@@ -55,47 +49,192 @@
 
   applyLang(pickLang());
 
-  // ---------- dialog ----------
+  // =========================================================
+  // The form: group → name → address → thanks
+  // =========================================================
   var dialog = document.getElementById('form-dialog');
   var form = document.getElementById('rsvp');
-  var thanks = document.getElementById('thanks');
+  var list = document.getElementById('guest-list');
+  var filter = document.getElementById('guest-filter');
+  var guestStatus = document.getElementById('guest-status');
+  var guestName = document.getElementById('guest-name');
+  var nameField = document.getElementById('name-field');
+  var nameInput = document.getElementById('f-name');
+  var countryInput = document.getElementById('f-country');
   var status = document.getElementById('status');
   var submit = document.getElementById('submit');
 
-  document.getElementById('open-form').addEventListener('click', function () {
-    form.hidden = false;
-    thanks.hidden = true;
+  var state = { group: null, flang: 'en', guest: null };
+
+  function f(key) { return FORM[state.flang][key]; }
+
+  function applyFormLang() {
+    dialog.querySelectorAll('[data-step]:not([data-step="group"])').forEach(function (step) {
+      step.lang = state.flang;
+    });
+    dialog.querySelectorAll('[data-f]').forEach(function (el) { el.textContent = f(el.dataset.f); });
+    dialog.querySelectorAll('[data-f-ph]').forEach(function (el) { el.placeholder = f(el.dataset.fPh); });
+    dialog.querySelectorAll('[data-f-aria]').forEach(function (el) { el.setAttribute('aria-label', f(el.dataset.fAria)); });
+  }
+
+  function showStep(name) {
+    dialog.querySelectorAll('.step').forEach(function (s) { s.hidden = s.dataset.step !== name; });
+    dialog.scrollTop = 0;
+    var current = dialog.querySelector('[data-step="' + name + '"]');
+    var first = current.querySelector('h2, .q-main');
+    if (first) { first.tabIndex = -1; first.focus({ preventScroll: true }); }
+  }
+
+  function resetForm() {
+    form.reset();
     status.textContent = '';
+    filter.value = '';
+    state = { group: null, flang: 'en', guest: null };
+    showStep('group');
+  }
+
+  document.getElementById('open-form').addEventListener('click', function () {
+    resetForm();
     dialog.showModal();
   });
   document.getElementById('close-form').addEventListener('click', function () { dialog.close(); });
   document.getElementById('close-thanks').addEventListener('click', function () { dialog.close(); });
-  // Click on the dark backdrop closes the dialog
   dialog.addEventListener('click', function (e) { if (e.target === dialog) dialog.close(); });
-
-  // ---------- companions ----------
-  var list = document.getElementById('companions');
-  var rowTemplate = document.getElementById('companion-row');
-
-  document.getElementById('add-companion').addEventListener('click', function () {
-    var li = rowTemplate.content.firstElementChild.cloneNode(true);
-    var input = li.querySelector('input');
-    var remove = li.querySelector('.remove');
-    input.placeholder = t('companionPlaceholder');
-    input.setAttribute('aria-label', t('companionPlaceholder'));
-    remove.setAttribute('aria-label', t('remove'));
-    remove.addEventListener('click', function () { li.remove(); });
-    list.appendChild(li);
-    input.focus();
+  dialog.querySelectorAll('[data-back]').forEach(function (b) {
+    b.addEventListener('click', function () { showStep(b.dataset.back); });
   });
 
-  // ---------- submit ----------
+  // ---------- step 1: group ----------
+  dialog.querySelectorAll('.choice').forEach(function (b) {
+    b.addEventListener('click', function () {
+      state.group = b.dataset.group;
+      state.flang = GROUP_LANG[state.group];
+      applyFormLang();
+      filter.value = '';
+      showStep('name');
+      renderGuests();
+    });
+  });
+
+  // ---------- step 2: name ----------
+  var guestsPromise = null;
+
+  function loadGuests() {
+    if (!guestsPromise) {
+      guestsPromise = fetch('guests.csv', { cache: 'no-cache' })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+        .then(parseGuests)
+        .catch(function (err) { guestsPromise = null; throw err; });
+    }
+    return guestsPromise;
+  }
+
+  // CSV with a header "name,group" (any column order works). Commas or semicolons (Czech Excel saves
+  // with semicolons), quoted values, and a UTF-8 BOM are all fine.
+  function parseGuests(text) {
+    var lines = text.replace(/^﻿/, '').split(/\r?\n/).filter(function (l) { return l.trim(); });
+    var sep = lines[0].indexOf(';') >= 0 ? ';' : ',';
+    var head = splitRow(lines[0], sep).map(function (h) { return h.trim().toLowerCase(); });
+    var gi = head.indexOf('group');
+    var ni = head.indexOf('name');
+    return lines.slice(1).map(function (l) {
+      var cells = splitRow(l, sep);
+      return { group: (cells[gi] || '').trim().toLowerCase(), name: (cells[ni] || '').trim() };
+    }).filter(function (g) { return g.name && GROUP_LANG[g.group]; });
+  }
+
+  function splitRow(line, sep) {
+    var out = [], cur = '', quoted = false;
+    for (var i = 0; i < line.length; i++) {
+      var c = line[i];
+      if (quoted) {
+        if (c === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+        else if (c === '"') quoted = false;
+        else cur += c;
+      } else if (c === '"') quoted = true;
+      else if (c === sep) { out.push(cur); cur = ''; }
+      else cur += c;
+    }
+    out.push(cur);
+    return out;
+  }
+
+  function plain(s) {
+    return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  }
+
+  function renderGuests() {
+    list.innerHTML = '';
+    guestStatus.textContent = '';
+    loadGuests().then(function (all) {
+      var mine = all
+        .filter(function (g) { return g.group === state.group; })
+        .sort(function (a, b) { return a.name.localeCompare(b.name, state.flang); });
+      filter.hidden = mine.length <= 8;
+      var q = plain(filter.value.trim());
+      var shown = mine.filter(function (g) { return !q || plain(g.name).indexOf(q) >= 0; });
+      shown.forEach(function (g) {
+        var li = document.createElement('li');
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'guest';
+        b.textContent = g.name;
+        b.addEventListener('click', function () { chooseGuest(g.name); });
+        li.appendChild(b);
+        list.appendChild(li);
+      });
+      if (!shown.length) guestStatus.textContent = f('noMatch');
+    }).catch(function () {
+      filter.hidden = true;
+      guestStatus.textContent = f('loadError');
+    });
+  }
+
+  filter.addEventListener('input', renderGuests);
+
+  function chooseGuest(name) {
+    state.guest = name;
+    guestName.hidden = false;
+    guestName.innerHTML = '';
+    var strong = document.createElement('strong');
+    strong.textContent = name;
+    var change = document.createElement('button');
+    change.type = 'button';
+    change.className = 'link';
+    change.textContent = f('notYou');
+    change.addEventListener('click', function () { showStep('name'); });
+    guestName.appendChild(strong);
+    guestName.appendChild(change);
+    nameField.hidden = true;
+    nameInput.required = false;
+    goToAddress();
+  }
+
+  document.getElementById('not-listed').addEventListener('click', function () {
+    state.guest = null;
+    guestName.hidden = true;
+    nameField.hidden = false;
+    nameInput.required = true;
+    goToAddress();
+  });
+
+  // ---------- step 3: address ----------
+  function goToAddress() {
+    status.textContent = '';
+    if (!countryInput.value || countryInput.dataset.auto === 'true') {
+      countryInput.value = f('defaultCountry');
+      countryInput.dataset.auto = 'true';
+    }
+    showStep('address');
+  }
+  countryInput.addEventListener('input', function () { countryInput.dataset.auto = 'false'; });
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     status.textContent = '';
 
     if (!form.checkValidity()) {
-      status.textContent = t('required');
+      status.textContent = f('required');
       var firstInvalid = form.querySelector(':invalid');
       if (firstInvalid) firstInvalid.focus();
       return;
@@ -103,22 +242,20 @@
 
     var data = new FormData(form);
     // Bots fill in the hidden field, people never do: pretend success.
-    if (data.get('website')) { showThanks(); return; }
+    if (data.get('website')) { showThanks(false); return; }
 
-    var companions = data.getAll('companion')
-      .map(function (s) { return String(s).trim(); })
-      .filter(Boolean);
+    function val(k) { return String(data.get(k) || '').trim(); }
 
     var payload = new URLSearchParams({
-      name: String(data.get('name')).trim(),
-      email: String(data.get('email')).trim(),
-      street: String(data.get('street')).trim(),
-      zip: String(data.get('zip')).trim(),
-      city: String(data.get('city')).trim(),
-      country: String(data.get('country')).trim(),
-      companions: companions.join('; '),
-      companionCount: String(companions.length),
-      lang: lang
+      name: state.guest || val('name'),
+      onList: state.guest ? 'yes' : 'no',
+      group: state.group,
+      street: val('street'),
+      zip: val('zip'),
+      city: val('city'),
+      country: val('country'),
+      note: val('note'),
+      lang: state.flang
     });
 
     if (!CONFIG.scriptUrl) {
@@ -128,26 +265,21 @@
     }
 
     submit.disabled = true;
-    submit.textContent = t('sending');
+    submit.textContent = f('sending');
 
     // Apps Script does not send CORS headers, so the answer cannot be read
     // ("no-cors"). The request still arrives; a network failure still throws.
     fetch(CONFIG.scriptUrl, { method: 'POST', mode: 'no-cors', body: payload })
       .then(function () { showThanks(false); })
-      .catch(function () { status.textContent = t('error'); })
+      .catch(function () { status.textContent = f('error'); })
       .then(function () {
         submit.disabled = false;
-        submit.textContent = t('submit');
+        submit.textContent = f('submit');
       });
   });
 
   function showThanks(demo) {
-    form.reset();
-    list.innerHTML = '';
-    form.hidden = true;
-    thanks.hidden = false;
-    var p = thanks.querySelector('p');
-    p.textContent = t('thanksText') + (demo ? ' ' + t('demo') : '');
-    document.getElementById('close-thanks').focus();
+    document.getElementById('thanks-text').textContent = f('thanksText') + (demo ? ' ' + f('demo') : '');
+    showStep('thanks');
   }
 })();
