@@ -74,14 +74,12 @@ body {
 .lang button:hover { color: var(--text); }
 .lang button[aria-pressed="true"] { color: var(--ink); }
 
-/* ---------- the card: an arch, like an Algarve window ---------- */
+/* ---------- the content: no frame, just type on paper ---------- */
 .card {
   width: 100%;
   max-width: 440px;
   text-align: center;
-  padding: 72px 32px 44px;
-  border: 1px solid var(--ink);
-  border-radius: 220px 220px 12px 12px;
+  padding: 24px 8px;
 }
 
 .names {
@@ -102,7 +100,7 @@ body {
 }
 h1.script {
   margin: 18px 0 6px;
-  font-size: clamp(44px, 12vw, 62px);
+  font-size: clamp(40px, 11vw, 62px);
 }
 
 .lead {
@@ -302,7 +300,6 @@ input:user-invalid { border-color: var(--danger); }
 .thanks p { margin: 0 0 24px; color: var(--muted); }
 
 @media (max-width: 420px) {
-  .card { padding: 60px 22px 36px; }
   #rsvp, .thanks { padding: 32px 18px 22px; }
   .row { flex-direction: column; gap: 0; }
 }
