@@ -1,2 +1,4 @@
 # Local Claude Code settings (preview server), not part of the website
 .claude/
+# Lock file of locally installed Claude Code skills (npx skills add)
+skills-lock.json
