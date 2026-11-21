@@ -8,6 +8,10 @@ window.I18N = {
   page: {
     cs: {
       introDate: '1.–3. října',
+      say1a: 'v Algarve,',
+      say1b: 'v Portugalsku',
+      say2a: 'Ubytování',
+      say2b: 'zajištěno',
       lead: 'Bereme se!',
       date: '1.–3. října 2027',
       place: 'Algarve · Portugalsko',
@@ -17,6 +21,10 @@ window.I18N = {
     },
     en: {
       introDate: '1–3 October',
+      say1a: 'in Algarve,',
+      say1b: 'Portugal',
+      say2a: 'Accommodation',
+      say2b: 'included',
       lead: "We're getting married!",
       date: '1 – 3 October 2027',
       place: 'Algarve · Portugal',
@@ -26,6 +34,10 @@ window.I18N = {
     },
     pt: {
       introDate: '1 a 3 de outubro',
+      say1a: 'no Algarve,',
+      say1b: 'Portugal',
+      say2a: 'Alojamento',
+      say2b: 'incluído',
       lead: 'Vamos casar!',
       date: '1 a 3 de outubro de 2027',
       place: 'Algarve · Portugal',
@@ -35,6 +47,10 @@ window.I18N = {
     },
     de: {
       introDate: '1.–3. Oktober',
+      say1a: 'an der Algarve,',
+      say1b: 'Portugal',
+      say2a: 'Unterkunft',
+      say2b: 'inklusive',
       lead: 'Wir heiraten!',
       date: '1.–3. Oktober 2027',
       place: 'Algarve · Portugal',

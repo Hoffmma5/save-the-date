@@ -54,7 +54,7 @@
   // (timings match the transitions in css/style.css)
   // =========================================================
   var PAINT_MS = 3900;   // morph, sky, the dates written, a moment to look
-  var FALL_MS = 3100;    // the orange falls, the view moves into the village
+  var FALL_MS = 10300;   // three drops with two written lines, into the village
 
   function setStage(name) { root.className = 'stage-' + name; }
 
